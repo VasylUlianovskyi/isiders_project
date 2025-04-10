@@ -6,8 +6,6 @@ import Home from './pages/Home/Home';
 import Footer from './components/Footer/Footer';
 
 export function App () {
-  const [count, setCount] = useState(0);
-
   return (
     <>
       <Header />
