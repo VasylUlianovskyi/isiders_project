@@ -1,4 +1,3 @@
-// src/pages/Registration/Registration.tsx
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import styles from './Registration.module.sass';
 import { REGISTRATION_VALIDATION_SCHEMA } from '../../utils/validators/REGISTRATION_VALIDATION_SCHEMA';
