@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { RequestHandler } from 'express';
 import Event from '../models/Events';
+
 export const createEvent: RequestHandler = async (
   req: Request,
   res: Response
@@ -29,8 +30,29 @@ export const createEvent: RequestHandler = async (
     });
   } catch (error) {
     console.error('createEvent error:', error);
-    res
-      .status(500)
-      .json({ error: 'Internal server error, because of course it is' });
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const getEvents: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const userId = Number(req.query.userId);
+
+    if (!userId || isNaN(userId)) {
+      res.status(400).json({ error: 'userId is required in query params' });
+    }
+
+    const events = await Event.findAll({
+      where: { userId },
+      order: [['date', 'ASC']],
+    });
+
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('getEvents error:', error);
+    res.status(500).json({ error: 'Failed to fetch events' });
   }
 };
