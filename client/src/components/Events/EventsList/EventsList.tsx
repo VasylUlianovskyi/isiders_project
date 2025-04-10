@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import EventEditForm from './../EventEditForm/EventEditForm';
 import styles from './EventsList.module.sass';
 
 interface EventItem {
@@ -16,6 +17,7 @@ const EventsList = () => {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingEventId, setEditingEventId] = useState<number | null>(null);
 
   const fetchEvents = async () => {
     const userId = localStorage.getItem('userId');
@@ -54,6 +56,10 @@ const EventsList = () => {
   useEffect(() => {
     fetchEvents();
   }, []);
+
+  const handleEdit = (id: number) => {
+    setEditingEventId(id);
+  };
 
   const handleDelete = async (id: number) => {
     const token = localStorage.getItem('token');
@@ -99,9 +105,8 @@ const EventsList = () => {
                 <p>{event.description}</p>
               </div>
               <div className={styles.actions}>
-                <button onClick={() => alert('Edit feature coming soon')}>
-                  Update
-                </button>
+                <button onClick={() => handleEdit(event.id)}>Update</button>
+
                 <button
                   onClick={() => handleDelete(event.id)}
                   className={styles.delete}
@@ -109,6 +114,20 @@ const EventsList = () => {
                   Delete
                 </button>
               </div>
+              {editingEventId === event.id && (
+                <EventEditForm
+                  event={event}
+                  onCancel={() => setEditingEventId(null)}
+                  onUpdate={updatedEvent => {
+                    setEvents(prev =>
+                      prev.map(e =>
+                        e.id === updatedEvent.id ? updatedEvent : e
+                      )
+                    );
+                    setEditingEventId(null);
+                  }}
+                />
+              )}
             </li>
           ))}
         </ul>

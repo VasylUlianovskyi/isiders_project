@@ -56,3 +56,27 @@ export const getEvents: RequestHandler = async (
     res.status(500).json({ error: 'Failed to fetch events' });
   }
 };
+
+export const updateEvent: RequestHandler = async (req, res) => {
+  const { id } = req.params;
+  const { name, date, reminder, description, importance, status } = req.body;
+
+  try {
+    const event = await Event.findByPk(id);
+    if (!event) {
+      res.status(404).json({ message: 'Подію не знайдено' });
+    }
+
+    event!.name = name || event!.name;
+    event!.date = date ? new Date(date) : event!.date;
+    event!.reminder = reminder ?? event!.reminder;
+    event!.description = description || event!.description;
+    event!.importance = importance || event!.importance;
+    event!.status = status || event!.status;
+
+    await event!.save();
+    res.json(event);
+  } catch (error) {
+    res.status(500).json({ message: 'Помилка при оновленні події', error });
+  }
+};
