@@ -12,11 +12,7 @@ sequelize
   .authenticate()
 
   .then(async () => {
-    console.log('Database connected');
-    console.log('Syncing with models:');
-    console.log(' User model:', User === undefined ? 'NOT DEFINED' : 'OK');
-
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ alter: true });
     app.listen(PORT, () => {
       console.log(` Server running on http://localhost:${PORT}`);
     });
