@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from './EventEditForm.module.sass';
+import { EVENTS_VALIDATION_SCHEMA } from '../../../utils/validators/EVENTS_VALIDATION_SCHEMA';
 
 interface EventItem {
   id: number;
@@ -42,12 +43,15 @@ const EventEditForm: React.FC<Props> = ({ event, onCancel, onUpdate }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedEvent = {
-      ...event,
-      ...eventData,
-    };
 
     try {
+      await EVENTS_VALIDATION_SCHEMA.validate(eventData, { abortEarly: false });
+
+      const updatedEvent = {
+        ...event,
+        ...eventData,
+      };
+
       const res = await fetch(`http://localhost:5000/api/events/${event.id}`, {
         method: 'PUT',
         headers: {
@@ -64,8 +68,12 @@ const EventEditForm: React.FC<Props> = ({ event, onCancel, onUpdate }) => {
       }
 
       onUpdate(data);
-    } catch (err) {
-      console.error('Update error:', err);
+    } catch (err: any) {
+      if (err.name === 'ValidationError') {
+        console.error('Validation errors:', err.errors);
+      } else {
+        console.error('Update error:', err);
+      }
     }
   };
 

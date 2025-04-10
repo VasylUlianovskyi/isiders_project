@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import EventEditForm from './../EventEditForm/EventEditForm';
 import styles from './EventsList.module.sass';
+import EventTimer from '../EventTimer/EventTimer';
 
 interface EventItem {
   id: number;
@@ -104,6 +105,8 @@ const EventsList = () => {
                 </p>
                 <p>{event.description}</p>
               </div>
+              <EventTimer targetDate={event.date} />
+
               <div className={styles.actions}>
                 <button onClick={() => handleEdit(event.id)}>Update</button>
 
