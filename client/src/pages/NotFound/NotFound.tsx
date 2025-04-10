@@ -1,7 +1,14 @@
-import React from 'react';
+import styles from './NotFound.module.sass';
+import { Link } from 'react-router-dom';
 
-function NotFound () {
-  return <div>NotFound</div>;
+export default function NotFound () {
+  return (
+    <div className={styles.notFound}>
+      <h1>404 — Page not exist</h1>
+
+      <Link to='/' className={styles.notFoundLink}>
+        Go to Home Page
+      </Link>
+    </div>
+  );
 }
-
-export default NotFound;
