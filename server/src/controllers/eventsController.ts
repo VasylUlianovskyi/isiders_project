@@ -47,7 +47,7 @@ export const getEvents: RequestHandler = async (
 
     const events = await Event.findAll({
       where: { userId },
-      order: [['date', 'ASC']],
+      order: [['date', 'DESC']],
     });
 
     res.status(200).json(events);
@@ -64,7 +64,7 @@ export const updateEvent: RequestHandler = async (req, res) => {
   try {
     const event = await Event.findByPk(id);
     if (!event) {
-      res.status(404).json({ message: 'Подію не знайдено' });
+      res.status(404).json({ message: 'Event not found' });
     }
 
     event!.name = name || event!.name;
@@ -78,5 +78,27 @@ export const updateEvent: RequestHandler = async (req, res) => {
     res.json(event);
   } catch (error) {
     res.status(500).json({ message: 'Помилка при оновленні події', error });
+  }
+};
+
+export const deleteEvent: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const { id } = req.params;
+
+  try {
+    const event = await Event.findByPk(id);
+
+    if (!event) {
+      res.status(404).json({ error: 'Event not found' });
+    }
+
+    await event!.destroy();
+
+    res.status(200).json({ message: 'Event deleted successfully' });
+  } catch (error) {
+    console.error('Delete error:', error);
+    res.status(500).json({ error: 'Failed to delete event' });
   }
 };
