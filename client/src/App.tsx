@@ -1,5 +1,6 @@
-import './app.css';
 import { Routes, Route } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import CalendarView from './components/Events/CalendarView/CalendarView';
 
@@ -11,26 +12,94 @@ import Footer from './components/Footer/Footer';
 import NotFound from './pages/NotFound/NotFound';
 import LoginForm from './components/LoginForm/LoginForm';
 import RegistrationForm from './components/RegistrarionForm/RegistrationForm';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import './app.css';
 
 export default function App () {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const email = localStorage.getItem('userEmail');
+    if (token && email) {
+      setIsLoggedIn(true);
+      setUserEmail(email);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    setIsLoggedIn(false);
+    setUserEmail(null);
+    navigate('/login');
+  };
+
   return (
     <div className='app-layout'>
-      <Header />
-      <Routes>
-        <Route path='/login' element={<LoginForm />} />
-        <Route path='/registration' element={<RegistrationForm />} />
-      </Routes>
-      <Navbar />
+      <Header
+        isLoggedIn={isLoggedIn}
+        userEmail={userEmail}
+        onLogout={handleLogout}
+      />
+
+      {isLoggedIn && <Navbar />}
+
       <main className='app-content'>
         <Routes>
-          <Route path='/' element={<Home />} />
+          <Route
+            path='/login'
+            element={
+              <LoginForm
+                onLoginSuccess={(email: string) => {
+                  setIsLoggedIn(true);
+                  setUserEmail(email);
+                  navigate('/');
+                }}
+              />
+            }
+          />
+          <Route path='/registration' element={<RegistrationForm />} />
 
-          <Route path='/calendar' element={<CalendarView />} />
-          <Route path='/events' element={<EventsList />} />
-          <Route path='/form' element={<EventsForm />} />
+          <Route
+            path='/'
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/calendar'
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <CalendarView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/events'
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <EventsList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/form'
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <EventsForm />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path='*' element={<NotFound />} />
         </Routes>
       </main>
+
       <Footer />
     </div>
   );

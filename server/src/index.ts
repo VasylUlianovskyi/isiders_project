@@ -1,5 +1,6 @@
 import path from 'path';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 import app from './app';
