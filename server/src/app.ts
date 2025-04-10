@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes';
+import eventsRoutes from './routes/eventsRouter';
 
 import { Request, Response } from 'express';
 
@@ -14,5 +15,6 @@ app.get('/', (_req: Request, res: Response) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/events', eventsRoutes);
 
 export default app;

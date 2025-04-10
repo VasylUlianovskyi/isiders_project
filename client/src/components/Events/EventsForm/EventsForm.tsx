@@ -6,6 +6,55 @@ import { EVENTS_VALIDATION_SCHEMA } from '../../../utils/validators/EVENTS_VALID
 const EventForm = () => {
   const [isClicked, setIsClicked] = useState(false);
 
+  const handleSubmit = async (
+    values: {
+      eventName: string;
+      eventDate: string;
+      reminderTime: number;
+      description: string;
+      importance: string;
+    },
+    { resetForm }: { resetForm: () => void }
+  ) => {
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) {
+      console.error('No userId found');
+      return;
+    }
+
+    const payload = {
+      name: values.eventName,
+      date: new Date(values.eventDate).toISOString(),
+      reminder: values.reminderTime,
+      description: values.description,
+      importance: values.importance,
+      status: 'active',
+      userId: Number(userId),
+    };
+
+    try {
+      const res = await fetch('http://localhost:5000/api/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Event creation failed');
+
+      resetForm();
+      setIsClicked(true);
+      setTimeout(() => setIsClicked(false), 300);
+    } catch (err: any) {
+      console.error('Event error:', err.message);
+    }
+  };
+
   return (
     <Formik
       initialValues={{
@@ -16,23 +65,7 @@ const EventForm = () => {
         importance: 'normal',
       }}
       validationSchema={EVENTS_VALIDATION_SCHEMA}
-      onSubmit={(values, { resetForm }) => {
-        const newTimer = {
-          id: Date.now(),
-          name: values.eventName,
-          date: new Date(values.eventDate).toISOString(),
-          reminder: values.reminderTime,
-          description: values.description,
-          importance: values.importance,
-          createdAt: new Date().toISOString(),
-          status: 'active',
-        };
-
-        console.log('Created Event:', newTimer);
-        resetForm();
-        setIsClicked(true);
-        setTimeout(() => setIsClicked(false), 300);
-      }}
+      onSubmit={handleSubmit}
     >
       {({ isSubmitting }) => (
         <Form className={styles.eventForm}>

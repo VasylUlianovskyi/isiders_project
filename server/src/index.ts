@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 import app from './app';
 import sequelize from './config/sequelize';
-import User from './models/User';
+import db from './models';
 
 const PORT = process.env.PORT || 5000;
 

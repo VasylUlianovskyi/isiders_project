@@ -31,11 +31,11 @@ const Login = ({ onLoginSuccess }: Props) => {
             if (!res.ok) {
               throw new Error(data.error || 'Login failed');
             }
-
+            localStorage.setItem('userId', String(data.user.id));
             localStorage.setItem('token', data.token);
             localStorage.setItem('userEmail', data.user.email);
             onLoginSuccess(data.user.email);
-            navigate('/'); // опціонально, якщо хочеш одразу перенаправити
+            navigate('/');
           } catch (err: any) {
             console.error('Login error:', err.message);
             setFieldError('password', err.message);

@@ -62,7 +62,7 @@ export const login: RequestHandler = async (req: Request, res: Response) => {
     res.status(200).json({
       message: 'Login success',
       token,
-      user: { email: user!.email },
+      user: { id: user!.id, email: user!.email },
     });
   } catch (error) {
     console.error(error);

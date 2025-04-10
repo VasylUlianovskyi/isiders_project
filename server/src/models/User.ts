@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/sequelize';
+import Event from './Events';
 
 interface UserAttributes {
   id: number;
@@ -51,5 +52,12 @@ User.init(
   }
 );
 console.log('User model loaded');
+
+export const associateUser = (models: { Event: typeof Event }) => {
+  User.hasMany(models.Event, {
+    foreignKey: 'userId',
+    as: 'events',
+  });
+};
 
 export default User;
