@@ -9,15 +9,22 @@ import Header from './components/Header/Header';
 import Navbar from './components/layout/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import NotFound from './pages/NotFound/NotFound';
+import LoginForm from './components/LoginForm/LoginForm';
+import RegistrationForm from './components/RegistrarionForm/RegistrationForm';
 
 export default function App () {
   return (
     <div className='app-layout'>
       <Header />
+      <Routes>
+        <Route path='/login' element={<LoginForm />} />
+        <Route path='/registration' element={<RegistrationForm />} />
+      </Routes>
       <Navbar />
       <main className='app-content'>
         <Routes>
           <Route path='/' element={<Home />} />
+
           <Route path='/calendar' element={<CalendarView />} />
           <Route path='/events' element={<EventsList />} />
           <Route path='/form' element={<EventsForm />} />
