@@ -11,7 +11,7 @@ const EventForm = () => {
       initialValues={{
         eventName: '',
         eventDate: '',
-        reminderTime: 1,
+        reminderTime: 10,
         description: '',
         importance: 'normal',
       }}
