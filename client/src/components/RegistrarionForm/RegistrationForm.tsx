@@ -1,5 +1,5 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import styles from './Registration.module.sass';
+import styles from './RegistrationFrom.module.sass';
 import { REGISTRATION_VALIDATION_SCHEMA } from '../../utils/validators/REGISTRATION_VALIDATION_SCHEMA';
 
 const Registration = () => {
