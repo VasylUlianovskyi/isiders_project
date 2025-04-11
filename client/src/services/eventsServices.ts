@@ -2,14 +2,11 @@ const EVENTS_API_URL = 'http://localhost:5000/api/events';
 
 export const fetchUserEvents = async (userId: string, token: string) => {
   try {
-    const res = await fetch(
-      `http://localhost:5000/api/events?userId=${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res = await fetch(`${EVENTS_API_URL}?userId=${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     const data = await res.json();
 
@@ -20,4 +17,26 @@ export const fetchUserEvents = async (userId: string, token: string) => {
     console.error('Error fetching events:', error.message);
     throw error;
   }
+};
+
+export const updateEvent = async (
+  eventId: number,
+  updatedData: Partial<EventItem>
+): Promise<EventItem> => {
+  const res = await fetch(`${EVENTS_API_URL}/${eventId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+    body: JSON.stringify(updatedData),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to update event');
+  }
+
+  return data;
 };
