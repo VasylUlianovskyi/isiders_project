@@ -1,10 +1,34 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import styles from './RegistrationFrom.module.sass';
 import { REGISTRATION_VALIDATION_SCHEMA } from '../../utils/validators/REGISTRATION_VALIDATION_SCHEMA';
 import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../../services/authService';
 
 const Registration = () => {
   const navigate = useNavigate();
+
+  const handleRegistration = async (
+    values: RegistrationFormValues,
+    { setSubmitting, setFieldError }: FormikHelpers<RegistrationFormValues>
+  ) => {
+    try {
+      const data = await registerUser({
+        email: values.email,
+        password: values.password,
+      });
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.user.userId);
+      localStorage.setItem('userEmail', data.user.email);
+
+      navigate('/');
+    } catch (err: any) {
+      console.error('Registration error:', err.message);
+      setFieldError('email', err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className={styles.registrationContainer}>
@@ -12,38 +36,7 @@ const Registration = () => {
       <Formik
         initialValues={{ email: '', password: '', confirmPassword: '' }}
         validationSchema={REGISTRATION_VALIDATION_SCHEMA}
-        onSubmit={async (values, { setSubmitting, setFieldError }) => {
-          try {
-            const response = await fetch(
-              'http://localhost:5000/api/auth/register',
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  email: values.email,
-                  password: values.password,
-                }),
-              }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-              throw new Error(data.error || 'Registration failed');
-            }
-
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('userId', data.user.userId);
-            localStorage.setItem('userEmail', data.user.email);
-
-            navigate('/');
-          } catch (err: any) {
-            console.error('Registration error:', err.message);
-            setFieldError('email', err.message);
-          } finally {
-            setSubmitting(false);
-          }
-        }}
+        onSubmit={handleRegistration}
       >
         {({ isSubmitting }) => (
           <Form className={styles.registrationForm}>

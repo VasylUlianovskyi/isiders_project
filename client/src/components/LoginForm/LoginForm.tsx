@@ -2,6 +2,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import styles from './LoginForm.module.sass';
 import { LOGIN_VALIDATION_SCHEMA } from '../../utils/validators/LOGIN_VALIDATION_SCHEMA';
 import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../../services/authService';
 
 interface Props {
   onLoginSuccess: (email: string) => void;
@@ -10,39 +11,27 @@ interface Props {
 const Login = ({ onLoginSuccess }: Props) => {
   const navigate = useNavigate();
 
+  const handleLogin = async (values: { email: string; password: string }) => {
+    try {
+      const response = await loginUser(values);
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('userId', response.user.userId);
+      localStorage.setItem('userEmail', response.user.email);
+
+      onLoginSuccess(response.user.email);
+      navigate('/');
+    } catch (err: any) {
+      console.error('Login error:', err.message);
+    }
+  };
+
   return (
     <div className={styles.loginContainer}>
       <h2>Login</h2>
       <Formik
         initialValues={{ email: '', password: '' }}
         validationSchema={LOGIN_VALIDATION_SCHEMA}
-        onSubmit={async (values, { setSubmitting, setFieldError }) => {
-          try {
-            const res = await fetch('http://localhost:5000/api/auth/login', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(values),
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-              throw new Error(data.error || 'Login failed');
-            }
-            localStorage.setItem('userId', String(data.user.id));
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('userEmail', data.user.email);
-            onLoginSuccess(data.user.email);
-            navigate('/');
-          } catch (err: any) {
-            console.error('Login error:', err.message);
-            setFieldError('password', err.message);
-          } finally {
-            setSubmitting(false);
-          }
-        }}
+        onSubmit={handleLogin}
       >
         {({ isSubmitting }) => (
           <Form className={styles.loginForm}>
