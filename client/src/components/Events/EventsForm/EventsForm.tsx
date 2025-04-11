@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import styles from './EventsForm.module.sass';
+import { createEvent } from '../../../services/eventsServices';
+
 import { EVENTS_VALIDATION_SCHEMA } from '../../../utils/validators/EVENTS_VALIDATION_SCHEMA';
 
 const EventForm = () => {
@@ -34,19 +36,7 @@ const EventForm = () => {
     };
 
     try {
-      const res = await fetch('http://localhost:5000/api/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error || 'Event creation failed');
-
+      const data = await createEvent(payload);
       resetForm();
       setIsClicked(true);
       setTimeout(() => setIsClicked(false), 300);

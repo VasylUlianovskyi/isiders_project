@@ -40,3 +40,22 @@ export const updateEvent = async (
 
   return data;
 };
+
+export const createEvent = async (payload: any) => {
+  const res = await fetch(`${EVENTS_API_URL}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || 'Event creation failed');
+  }
+
+  return data;
+};
