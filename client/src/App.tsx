@@ -18,6 +18,8 @@ import './app.css';
 export default function App () {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,15 +29,19 @@ export default function App () {
       setIsLoggedIn(true);
       setUserEmail(email);
     }
+    setIsLoading(false);
   }, []);
 
   const handleLogout = () => {
+    localStorage.clear();
     localStorage.removeItem('token');
     localStorage.removeItem('userEmail');
     setIsLoggedIn(false);
     setUserEmail(null);
     navigate('/login');
   };
+
+  if (isLoading) return null;
 
   return (
     <div className='app-layout'>
@@ -52,13 +58,15 @@ export default function App () {
           <Route
             path='/login'
             element={
-              <LoginForm
-                onLoginSuccess={(email: string) => {
-                  setIsLoggedIn(true);
-                  setUserEmail(email);
-                  navigate('/');
-                }}
-              />
+              <ProtectedRoute isLoggedIn={!isLoggedIn}>
+                <LoginForm
+                  onLoginSuccess={(email: string) => {
+                    setIsLoggedIn(true);
+                    setUserEmail(email);
+                    navigate('/');
+                  }}
+                />
+              </ProtectedRoute>
             }
           />
           <Route path='/registration' element={<RegistrationForm />} />
