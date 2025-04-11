@@ -59,3 +59,41 @@ export const createEvent = async (payload: any) => {
 
   return data;
 };
+
+export const fetchEvents = async (): Promise<EventItem[]> => {
+  const userId = localStorage.getItem('userId');
+  const token = localStorage.getItem('token');
+
+  if (!userId || !token) {
+    throw new Error('Unauthorized');
+  }
+
+  const res = await fetch(`${EVENTS_API_URL}?userId=${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to fetch events');
+  }
+
+  return data;
+};
+
+export const deleteEvent = async (id: number): Promise<void> => {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${EVENTS_API_URL}/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || 'Failed to delete event');
+  }
+};

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import EventEditForm from './../EventEditForm/EventEditForm';
 import styles from './EventsList.module.sass';
 import EventTimer from '../EventTimer/EventTimer';
+import { fetchEvents, deleteEvent } from '../../../services/eventsServices';
 
 interface EventItem {
   id: number;
@@ -20,42 +21,11 @@ const EventsList = () => {
   const [error, setError] = useState<string | null>(null);
   const [editingEventId, setEditingEventId] = useState<number | null>(null);
 
-  const fetchEvents = async () => {
-    const userId = localStorage.getItem('userId');
-    const token = localStorage.getItem('token');
-
-    if (!userId || !token) {
-      setError('Unauthorized');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        `http://localhost:5000/api/events?userId=${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to fetch events');
-      }
-
-      setEvents(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchEvents();
+    fetchEvents()
+      .then(setEvents)
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleEdit = (id: number) => {
@@ -63,23 +33,11 @@ const EventsList = () => {
   };
 
   const handleDelete = async (id: number) => {
-    const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://localhost:5000/api/events/${id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to delete event');
-      }
-
+      await deleteEvent(id);
       setEvents(prev => prev.filter(e => e.id !== id));
-    } catch (err) {
-      console.error('Delete failed:', err);
+    } catch (err: any) {
+      console.error('Delete failed:', err.message);
     }
   };
 
