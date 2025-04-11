@@ -33,6 +33,11 @@ const EventsList = () => {
   };
 
   const handleDelete = async (id: number) => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this event?'
+    );
+    if (!confirmDelete) return;
+
     try {
       await deleteEvent(id);
       setEvents(prev => prev.filter(e => e.id !== id));
