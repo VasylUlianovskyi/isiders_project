@@ -51,7 +51,6 @@ User.init(
     timestamps: true,
   }
 );
-console.log('User model loaded');
 
 export const associateUser = (models: { Event: typeof Event }) => {
   User.hasMany(models.Event, {

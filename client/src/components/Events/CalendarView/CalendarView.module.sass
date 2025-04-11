@@ -1,0 +1,71 @@
+.calendarView
+  padding: 20px
+
+.controls
+  display: flex
+  gap: 10px
+  margin-bottom: 20px
+
+.listView
+  list-style: none
+  padding: 0
+  display: flex
+  flex-direction: column
+  gap: 15px
+
+.eventItem
+  background-color: #fff
+  padding: 15px
+  border-radius: 8px
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1)
+
+  border-left: 6px solid #ccc
+  position: relative
+
+  &.normal
+    border-left: 6px solid #999
+
+  &.important
+    border-left: 6px solid #fca311
+
+  &.critical
+    border-left: 6px solid #e63946
+
+.eventTitle
+  margin: 1px
+  font-size: 1.2rem
+  font-weight: bold
+
+.eventDate
+  font-size: 0.9rem
+  color: #666
+
+.eventDescription
+  margin-top: 5px
+  font-size: 0.95rem
+
+.importanceTag
+  display: inline-block
+  width: 80px
+  margin-bottom: 6px
+  padding: 2px 8px
+  border-radius: 4px
+  font-size: 0.75rem
+  font-weight: bold
+  text-transform: uppercase
+  color: grey
+
+.important
+  background-color: #fca2112f
+  padding: 5px
+  border-radius: 4px
+
+.critical
+  background-color: #e639472f
+  padding: 5px
+  border-radius: 4px
+
+.normal
+  background-color: #9999991e
+  padding: 5px
+  border-radius: 4px
