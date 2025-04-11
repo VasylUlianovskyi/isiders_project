@@ -20,6 +20,9 @@ export const loginUser = async (payload: LoginPayload) => {
     throw new Error(data.error || 'Login failed');
   }
 
+  localStorage.setItem('token', data.token);
+  localStorage.setItem('userEmail', data.user.email);
+  localStorage.setItem('userId', data.user.id);
   return data;
 };
 

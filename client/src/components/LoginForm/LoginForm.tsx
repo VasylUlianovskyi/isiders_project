@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../services/authService';
 
 interface Props {
-  onLoginSuccess: (email: string) => void;
+  onLoginSuccess: (email: string, userId: number) => void;
 }
 
 const Login = ({ onLoginSuccess }: Props) => {
@@ -15,10 +15,10 @@ const Login = ({ onLoginSuccess }: Props) => {
     try {
       const response = await loginUser(values);
       localStorage.setItem('token', response.token);
-      localStorage.setItem('userId', response.user.userId);
+      localStorage.setItem('userId', response.user.id);
       localStorage.setItem('userEmail', response.user.email);
 
-      onLoginSuccess(response.user.email);
+      onLoginSuccess(response.user.email, response.user.id);
       navigate('/');
     } catch (err: any) {
       console.error('Login error:', err.message);
