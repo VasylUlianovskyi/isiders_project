@@ -2,31 +2,18 @@ import { NavLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import styles from './Navbar.module.sass';
+import { fetchEvents } from '../../../services/eventsServices';
 
 export default function Navbar () {
   const [alertCount, setAlertCount] = useState(0);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      const userId = localStorage.getItem('userId');
-      const token = localStorage.getItem('token');
-
-      if (!userId || !token) return;
-
+    const updateBadge = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:5000/api/events?userId=${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await res.json();
+        const events = await fetchEvents();
         const now = new Date().getTime();
 
-        const count = data.filter((event: any) => {
+        const count = events.filter((event: any) => {
           const eventTime = new Date(event.date).getTime();
           const minutesLeft = (eventTime - now) / 60000;
           return minutesLeft <= event.reminder;
@@ -34,13 +21,12 @@ export default function Navbar () {
 
         setAlertCount(count);
       } catch (err) {
-        console.error('Failed to fetch events for badge', err);
+        console.error('Failed to update badge:', err);
       }
     };
 
-    fetchEvents();
-
-    const interval = setInterval(fetchEvents, 1000);
+    updateBadge();
+    const interval = setInterval(updateBadge, 1000);
     return () => clearInterval(interval);
   }, []);
 
