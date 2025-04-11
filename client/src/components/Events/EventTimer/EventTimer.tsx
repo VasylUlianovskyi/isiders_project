@@ -21,9 +21,9 @@ const EventTimer = ({ targetDate }: { targetDate: string }) => {
   return (
     <div className={styles.timer}>
       {days > 0 && <span>{days}d </span>}
-      <span>
-        {hours}h {minutes}m {seconds}s
-      </span>
+      {hours > 0 && <span>{hours}h </span>}
+      {minutes > 0 && <span>{minutes}m </span>}
+      <span>{seconds}s</span>
     </div>
   );
 };

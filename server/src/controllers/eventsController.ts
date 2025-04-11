@@ -47,7 +47,7 @@ export const getEvents: RequestHandler = async (
 
     const events = await Event.findAll({
       where: { userId },
-      order: [['date', 'DESC']],
+      order: [['date', 'ASC']],
     });
 
     res.status(200).json(events);
