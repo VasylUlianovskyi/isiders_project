@@ -1,4 +1,4 @@
-# Insiders Event Manager 🗓️
+# Insiders Event Manager
 
 ## Getting Started
 
@@ -29,7 +29,7 @@ The project is split into two parts:
 
 - Provides the REST API for authentication and event management.
 
-### Tech Stack
+## Tech Stack
 
 #### Frontend:
 
@@ -51,7 +51,7 @@ The project is split into two parts:
 - bcrypt
 - jsonwebtoken
 
-### Features
+## Features
 
 - Authentication — Register and login with JWT-based auth
 - Events CRUD — Create, read, update, and delete your events
@@ -62,7 +62,7 @@ The project is split into two parts:
 - Keyword search
 - Importance filtering (normal, important, critical)
 
-### REST API
+## REST API
 
 - POST /api/auth/register — Register new user
 - POST /api/auth/login — Authenticate and receive token
