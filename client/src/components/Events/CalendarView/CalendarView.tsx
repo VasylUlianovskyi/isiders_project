@@ -4,6 +4,7 @@ import { parse, startOfWeek, format, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import styles from './CalendarView.module.sass';
+import { fetchUserEvents } from '../../../services/eventsServices';
 
 const locales = {
   'en-US': enUS,
@@ -27,15 +28,14 @@ const CalendarView = () => {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
 
-    const res = await fetch(
-      `http://localhost:5000/api/events?userId=${userId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    if (!userId || !token) return;
 
-    const data = await res.json();
-    setEvents(data);
+    try {
+      const events = await fetchUserEvents(userId, token);
+      setEvents(events);
+    } catch (err: any) {
+      console.error('Failed to load events in CalendarView:', err.message);
+    }
   };
 
   useEffect(() => {
