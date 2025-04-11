@@ -69,7 +69,14 @@ export default function App () {
               </ProtectedRoute>
             }
           />
-          <Route path='/registration' element={<RegistrationForm />} />
+          <Route
+            path='/registration'
+            element={
+              <ProtectedRoute isLoggedIn={!isLoggedIn}>
+                <RegistrationForm />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path='/'
